@@ -1,0 +1,4 @@
+from src.screens.home_screen import home_screen --> this means that go to src folder inside that screens folder inside that home_screen file and take the home_screen function or object
+
+
+by default the button kind is secondary
