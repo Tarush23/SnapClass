@@ -4,7 +4,6 @@ from src.screens.teacher_screen import teacher_screen
 from src.screens.student_screen import student_screen
 
 def main():
-
     if "login_type" not in st.session_state:
         #print(st.session_state)
         st.session_state["login_type"]=None
@@ -16,6 +15,7 @@ def main():
             student_screen()
         case None:
             home_screen()
+            print("rerun")
             
 main()
 # # stream lit basics

@@ -8,7 +8,9 @@ def home_screen():
 
     header_home()
     style_background_home()
-    style_base_layout()
+    if "home_style_loaded" not in st.session_state:
+        style_base_layout()
+        st.session_state["home_style_loaded"] = True
 
     col1,col2 = st.columns(2)
 
