@@ -2,3 +2,577 @@ from src.screens.home_screen import home_screen --> this means that go to src fo
 
 
 by default the button kind is secondary
+
+
+
+predict_attendance function:
+
+This function is the **final attendance prediction function** of your project.
+
+Its job is:
+
+> Take class image → recognize students → verify prediction → mark attendance.
+
+---
+
+# Function Definition
+
+```python
+def predict_attendance(class_image_np):
+```
+
+### Purpose:
+
+Predict which students are present in the class image.
+
+### Input:
+
+```text
+class_image_np
+```
+
+* Class image in NumPy format
+* Can contain multiple faces
+
+Example:
+
+```text
+[Student1 Student2 Student3]
+```
+
+### Output:
+
+Returns:
+
+```python
+(detected_student,
+ all_students,
+ len(encoding))
+```
+
+Example:
+
+```python
+(
+ {101:True,104:True},
+ [101,102,103,104],
+ 128
+)
+```
+
+---
+
+# Step 1 — Generate Face Embeddings
+
+```python
+encodings =
+get_face_embeddings(
+    class_image_np
+)
+```
+
+### Purpose:
+
+Convert detected faces into embeddings.
+
+### Internal Flow:
+
+```text
+Image
+↓
+Face Detector
+↓
+Landmark Predictor
+↓
+Face Recognition Model
+↓
+Embeddings
+```
+
+Example:
+
+```python
+encodings=[
+ [0.21,-0.44,...],
+ [0.91,0.22,...]
+]
+```
+
+Each embedding represents one face.
+
+---
+
+# Step 2 — Create Attendance Dictionary
+
+```python
+detected_student={}
+```
+
+### Purpose:
+
+Store attendance result.
+
+Initially:
+
+```python
+{}
+```
+
+Later:
+
+```python
+{
+101:True,
+103:True
+}
+```
+
+Meaning:
+
+```text
+Student 101 present
+Student 103 present
+```
+
+---
+
+# Step 3 — Load Trained Model
+
+```python
+model_data=
+get_trained_model()
+```
+
+### Purpose:
+
+Load trained SVM and training data.
+
+Example:
+
+```python
+{
+"clf":trained_model,
+"X":embeddings,
+"y":student_ids
+}
+```
+
+---
+
+# Step 4 — Handle Empty Database
+
+```python
+if not model_data:
+    return {},{},0
+```
+
+### Purpose:
+
+If no students exist:
+
+Return:
+
+```python
+({}, {}, 0)
+```
+
+Meaning:
+
+```text
+No attendance possible
+```
+
+---
+
+# Step 5 — Extract Model Components
+
+```python
+clf=model_data["clf"]
+```
+
+### Purpose:
+
+Load trained SVM.
+
+---
+
+```python
+X_train=
+model_data["X"]
+```
+
+### Purpose:
+
+Load stored embeddings.
+
+Example:
+
+```python
+[
+ emb101,
+ emb102
+]
+```
+
+---
+
+```python
+y_train=
+model_data["y"]
+```
+
+### Purpose:
+
+Load student IDs.
+
+Example:
+
+```python
+[
+101,
+102
+]
+```
+
+Relationship:
+
+```text
+X_train[0]
+↓
+
+Student y_train[0]
+```
+
+---
+
+# Step 6 — Create Student List
+
+```python
+all_students=
+sorted(
+list(
+set(y_train)
+))
+```
+
+### Purpose:
+
+Get unique student IDs.
+
+Example:
+
+Before:
+
+```python
+[101,101,102]
+```
+
+After:
+
+```python
+[101,102]
+```
+
+---
+
+# Step 7 — Process Each Detected Face
+
+```python
+for encoding
+in encodings:
+```
+
+### Purpose:
+
+Loop over every detected face.
+
+Example:
+
+```python
+encodings=[
+ emb1,
+ emb2
+]
+```
+
+Loop executes twice.
+
+---
+
+# Step 8 — Predict Student ID
+
+```python
+if len(all_students)>=2:
+```
+
+### Purpose:
+
+If multiple students exist:
+
+Use SVM.
+
+---
+
+```python
+predicted_id=
+int(
+clf.predict(
+[encoding]
+)[0]
+)
+```
+
+### Explanation:
+
+Input:
+
+```python
+[
+ embedding
+]
+```
+
+SVM predicts:
+
+```text
+Embedding
+↓
+
+Student ID
+```
+
+Example:
+
+```python
+101
+```
+
+---
+
+Else:
+
+```python
+predicted_id=
+int(
+all_students[0]
+)
+```
+
+### Purpose:
+
+If only one student exists:
+
+No prediction needed.
+
+---
+
+# Step 9 — Retrieve Stored Embedding
+
+```python
+student_embedding=
+X_train[
+y_train.index(
+predicted_id
+)
+]
+```
+
+### Purpose:
+
+Get embedding of predicted student.
+
+Flow:
+
+```text
+predicted_id
+↓
+
+find index in y_train
+↓
+
+use same index in X_train
+↓
+
+retrieve embedding
+```
+
+Example:
+
+```python
+y_train=
+[101,102]
+
+predicted_id=
+102
+```
+
+Index:
+
+```text
+1
+```
+
+Retrieve:
+
+```python
+X_train[1]
+```
+
+---
+
+# Step 10 — Verify Prediction
+
+```python
+best_match_score=
+np.linalg.norm(
+student_embedding
+-
+encoding
+)
+```
+
+### Purpose:
+
+Calculate Euclidean distance.
+
+Formula:
+
+```text
+Distance
+=
+||A−B||
+```
+
+Meaning:
+
+```text
+Stored Face
+VS
+Current Face
+```
+
+Example:
+
+```text
+0.25
+```
+
+Small value → similar.
+
+---
+
+# Step 11 — Apply Threshold
+
+```python
+resemblance_threshold=
+0.6
+```
+
+Rule:
+
+```text
+distance≤0.6
+→ accept
+
+distance>0.6
+→ reject
+```
+
+Purpose:
+Avoid false recognition.
+
+---
+
+# Step 12 — Mark Attendance
+
+```python
+detected_student[
+predicted_id
+]=True
+```
+
+Example:
+
+```python
+{
+101:True
+}
+```
+
+Meaning:
+
+```text
+Student 101 detected
+```
+
+---
+
+# Final Return
+
+```python
+return(
+detected_student,
+all_students,
+len(encoding)
+)
+```
+
+Returns:
+
+### detected_student
+
+Present students
+
+Example:
+
+```python
+{
+101:True
+}
+```
+
+### all_students
+
+All registered students
+
+Example:
+
+```python
+[101,102,103]
+```
+
+### len(encoding)
+
+Embedding size.
+
+Usually:
+
+```text
+128
+```
+
+---
+
+# Complete Function Flow
+
+```text
+Class Image
+↓
+Generate Embeddings
+↓
+Load Trained SVM
+↓
+Predict Student
+↓
+Get Stored Embedding
+↓
+Compute Distance
+↓
+Threshold Check
+↓
+Mark Attendance
+↓
+Return Result
+```
+
+This function is the **recognition + verification + attendance marking stage** of your application.

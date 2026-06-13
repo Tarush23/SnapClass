@@ -17,3 +17,7 @@ segno  # for qr code generation
 pillow # helps in image preprocessing
 
 streamlit
+
+#voice recognition 
+librosa
+resemblyzer
