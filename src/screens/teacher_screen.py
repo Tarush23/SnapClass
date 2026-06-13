@@ -7,6 +7,8 @@ from src.database.db import create_teacher,check_teacher_exists,teacher_login
 
 import time
 
+from src.dashboard.teacher_dashboard import teacher_dashboard
+
 def teacher_screen():
     style_background_dashboard()
     style_base_layout() 
@@ -14,6 +16,7 @@ def teacher_screen():
     
     if "teacher_data" in st.session_state:
         teacher_dashboard()
+        return()
     elif "teacher_login_type" not in st.session_state or st.session_state["teacher_login_type"]=="login":
         teacher_screen_login()
     elif st.session_state["teacher_login_type"]=="register":
@@ -22,9 +25,7 @@ def teacher_screen():
     footer_dashboard()
 
 
-def teacher_dashboard():
-    teacher_data = st.session_state["teacher_data"]
-    st.header(f"welcome back {teacher_data["name"]}")
+
 
 def teacher_screen_login():
     c1,c2 = st.columns(2, vertical_alignment='center',gap='xxlarge')
@@ -33,7 +34,7 @@ def teacher_screen_login():
     with c2:
         if st.button("go back to home",type='secondary',key="loginbackbutton",shortcut="control+backspace"):
             #important feature
-            st.session_state["teacher_login_type"]=None
+            st.session_state["login_type"]=None
             st.rerun()
 
     

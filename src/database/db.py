@@ -55,3 +55,80 @@ def create_student(name,face_embedding,voice_embedding):
     }
     response = supabase.table("students").insert(data).execute()
     return response.data
+
+def create_subject(sub_code,sub_name,sub_section,teacher_id):
+    data = {
+        "subject_code":sub_code,
+        "name":sub_name,
+        "section":sub_section,
+        "teacher_id":teacher_id
+    }
+
+    response = supabase.table("subjects").insert(data).execute()
+    return response.data
+
+
+def get_teacher_subjects(teacher_id):
+
+    response = (
+        supabase
+        .table("subjects")
+        .select(
+            "*, subject_students(count), attendance_logs(timestamp)"
+        )
+        .eq("teacher_id", teacher_id)
+        .execute()
+    )
+
+    subjects = response.data
+
+    for subject in subjects:
+
+        # ---------- Count students ----------
+
+        students = subject.get(
+            "subject_students",
+            []
+        )
+
+        if students:
+            subject["total_students"] = (
+                students[0]["count"]
+            )
+
+        else:
+            subject["total_students"] = 0
+
+
+        # ---------- Count classes ----------
+
+        attendance = subject.get(
+            "attendance_logs",
+            []
+        )
+
+        timestamps = []
+
+        for log in attendance:
+            timestamps.append(
+                log["timestamp"]
+            )
+
+        subject["total_classes"] = (
+            len(
+                set(timestamps)
+            )
+        )
+        # ---------- Remove extra data ----------
+        subject.pop(
+            "subject_students",
+            None
+        )
+
+        subject.pop(
+            "attendance_logs",
+            None
+        )
+    return subjects
+
+    

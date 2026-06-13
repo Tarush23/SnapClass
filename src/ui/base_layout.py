@@ -67,9 +67,9 @@ def style_base_layout():
             font-family:'Outfit',sans-serif !important;
         }
 
-        button{
+        button[kind="primary"]{
             border-radius:1.5rem !important;
-            background:#5865F2 !important;
+            background-color:#5865F2 !important;
             color:white !important;
             padding: 10px 20px !important; 
             border: none !important; 
@@ -77,7 +77,7 @@ def style_base_layout():
         }
 
         button[kind="secondary"]{
-            background:#EB459E !important;
+            background-color:#EB459E !important;
             border-radius: 1.5rem !important;
             color: white !important; 
             padding: 10px 20px !important;
@@ -87,7 +87,7 @@ def style_base_layout():
 
         button[kind="tertiary"]{
             border-radius: 1.5rem !important;
-            background:black !important;
+            background-color:black !important;
             color: white !important; 
             padding: 10px 20px !important; 
             border: none !important; 
