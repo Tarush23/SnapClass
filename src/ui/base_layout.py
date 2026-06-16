@@ -36,17 +36,17 @@ def style_base_layout():
 
         /*for removing the default banner and spacing of streamlit*/
 
-        # #MainMenu{
-        #     visibility:hidden;
-        # }
+        #MainMenu{
+            visibility:hidden;
+        }
                 
-        # header{
-        #         visibility:hidden
-        #     }
+        header{
+                visibility:hidden
+            }
         
-        # footer {
-        #         visibility:hidden;
-        # }
+        footer {
+                visibility:hidden;
+        }
 
         .block-container{
             padding-top:1.5rem !important;
