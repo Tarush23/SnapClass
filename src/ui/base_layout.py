@@ -34,17 +34,23 @@ def style_base_layout():
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
                 
 
-        # /*for removing the default banner and spacing of streamlit*/
+        /*for removing the default banner and spacing of streamlit*/
 
-        # #MainMenu,
-        # footer,
-        # header{
+        # #MainMenu{
         #     visibility:hidden;
         # }
-
-        # .block-container{
-        #     padding-top:1.5rem !important;
+                
+        # header{
+        #         visibility:hidden
+        #     }
+        
+        # footer {
+        #         visibility:hidden;
         # }
+
+        .block-container{
+            padding-top:1.5rem !important;
+        }
 
         /* Streamlit headings */
 

@@ -1,10 +1,9 @@
 import streamlit as st
-if st.button("Click"):
 
-    st.write("A")
+from src.database.db import get_teacher_subjects
+from src.database.config import supabase
 
-    st.rerun()
+enrolled_res = supabase.table("subject_students").select("*,students(*)").eq("subject_id",2).execute()
 
-    st.write("B")
-
-st.write("C")
+    
+print(enrolled_res)

@@ -13,6 +13,8 @@ from src.pipelines.voice_recoginition import get_voice_embedding
 from src.database.db import get_all_students,create_student
 import time
 
+from src.dashboard.student_dashboard import student_dashboard
+
 
 def student_screen():
     show_registration=False
@@ -121,8 +123,3 @@ def student_screen():
     footer_dashboard()
 
 
-def student_dashboard():
-    student_data = st.session_state["student_data"]
-    student_id = student_data['student_id']
-
-    st.header(f"welcome back {student_data["name"]}")

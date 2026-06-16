@@ -131,4 +131,54 @@ def get_teacher_subjects(teacher_id):
         )
     return subjects
 
+def check_code(subject_code):
+    response = supabase.table("subjects").select("*").eq("subject_code",subject_code).execute()
+
+    #print(len(response.data)>0)
+
+    return len(response.data)>0
+
+
+def already_enrolled(subject_id,student_id):
+    response = supabase.table("subject_students").select("*").eq("subject_id",subject_id).eq("student_id",student_id).execute()
+
+    return len(response.data)>0
+
+
+def enroll_student(subject_id,student_id):
+    data = {
+        "subject_id":subject_id,
+        "student_id":student_id
+    }
+
+    response = supabase.table("subject_students").insert(data).execute()
+
+    return response.data
+
+
+def unenroll_student(subject_id,student_id):
+    response = supabase.table("subject_students").delete().eq("student_id",student_id).eq("subject_id",subject_id)
+
+    return response.data
+
+def get_student_subjects(student_id):
+    response = supabase.table("subject_students").select("*,subjects(*)").eq("student_id",student_id).execute()
+
+    return response.data
+
+def get_student_attendance(student_id):
+    response = supabase.table('attendance_logs').select('*, subjects(*)').eq('student_id', student_id).execute()
+    return response.data
+
     
+
+def create_attendance(logs):
+    response = supabase.table("attendance_logs").insert(logs).execute()
+    return response.data
+
+
+
+def get_subject_attendance(subject_id):
+    response = supabase.table("attendance_logs").select("*,students(name)").eq("subject_id",subject_id).execute()
+
+    return response.data
