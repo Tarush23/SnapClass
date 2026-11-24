@@ -69,7 +69,7 @@ def student_screen():
                         st.session_state.user_role = "student"
                         st.session_state["student_data"] = student_found
 
-                        st.toast(f"welcome back {student_found["name"]}")
+                        st.toast(f"welcome back {student_found['name']}")
                         time.sleep(2)
                         st.rerun()
 
